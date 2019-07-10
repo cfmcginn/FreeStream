@@ -17,11 +17,11 @@
 int InitED(const int nLattice, const double widthFromZeroFM, const double sigma)
 {
   // some constants
-  const double e0 = 0.00150022 * TMath::Power (140.*8/(5.*80), 4);
+  const double e0 = 0.00150022 * TMath::Power (140.*widthFromZeroFM/(5.*nLattice), 4);
   const double SCAL = 1. / 0.3989423 / 0.00630285;
   // create histogram
   TH2D* h2 = NULL;
-  h2 = new TH2D("h2","energy",80,-8,8,80,-8,8);
+  h2 = new TH2D("h2","energy", nLattice, -widthFromZeroFM, widthFromZeroFM, nLattice, -widthFromZeroFM, widthFromZeroFM);
   h2->Sumw2();
   // create function
   TF2* gauss = NULL;
