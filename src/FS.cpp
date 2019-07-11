@@ -505,7 +505,7 @@ void outputnewinitialconditions(double tt)
 {
 
   char cbuffer[255];
-  
+
   fstream inited,initux,inituy,initpixx,initpixy,initpiyy,itime,initpi,initxyed,initeduxuy;
   sprintf(cbuffer,"output/time-%.2f.dat",t/fmtoGeV*AT);
   itime.open(cbuffer,ios::out);
@@ -536,6 +536,10 @@ void outputnewinitialconditions(double tt)
   initeduxuy.open(cbuffer, ios::out);
   //  initeduxuy << "LatticeN\tDummy\tux\tuy\tDummy\tDummy\tDummy\n";
 
+  
+  double spacingFM = AT/fmtoGeV;
+  double start = spacingFM/2. - 1*(spacingFM*NUMT)/2.;
+  
   unsigned int counter=0;
   for (int sx=1;sx<=NUMT;sx++)
     for (int sy=1;sy<=NUMT;sy++)
@@ -548,8 +552,10 @@ void outputnewinitialconditions(double tt)
 	initpiyy << piyy[sx][sy] <<"\t";
 	initpi << pib[sx][sy] <<"\t";
 
+	double xfm = start + spacingFM*(sx - 1);
+	double yfm = start + spacingFM*(sy - 1);
 	//Lattice sites
-	initxyed << "0\t0\t" << e[sx][sy]/SCAL << "\n";
+	initxyed << xfm << "\t" << yfm << "\t" << e[sx][sy]/SCAL << "\n";
 	initeduxuy << e[sx][sy]/SCAL << "\t" << u[0][sx][sy] << "\t" << u[1][sx][sy] << "\t0\t0\t0\n";
 	++counter;
       }
