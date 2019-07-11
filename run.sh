@@ -33,7 +33,7 @@ echo "TotalCPU: $totalNCPU, capping at $nCPU"
 #Set this to keep computer from melting
 export OMP_NUM_THREADS=$nCPU
 
-nLattice=(10 20)
+nLattice=(80)
 
 mkdir -p logdir
 
@@ -45,6 +45,8 @@ do
     start=$SECONDS
     #DO THIS FIRST OR BUGS
     ./bin/initE.exe >& logdir/logInitE_N$i.log
+    #OVERRIDE ENERGY DENSITY   
+#    ./bin/InitED.exe $i 1.0 0.3
     ./bin/FS.exe data/params.txt >& logdir/logFS_N$i.log
     duration=$(( SECONDS - start ))
 

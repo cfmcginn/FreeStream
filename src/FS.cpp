@@ -527,7 +527,10 @@ void outputnewinitialconditions(double tt)
   //CFM MOD OUTPUT
   sprintf(cbuffer,"output/initxyed-%.2f.dat",t/fmtoGeV*AT);
   initxyed.open(cbuffer, ios::out);
-  initxyed << "LatticeN\tDummy\tDummy\ted\n";
+
+  //REMOVE LATTICE N FOR READABLE OUTPUT
+  //  initxyed << "LatticeN\tDummy\tDummy\ted\n";
+  initxyed << "Dummy\tDummy\ted\n";
   
   sprintf(cbuffer,"output/inituxuy-%.2f.dat",t/fmtoGeV*AT);
   inituxuy.open(cbuffer, ios::out);
@@ -545,8 +548,9 @@ void outputnewinitialconditions(double tt)
 	initpiyy << piyy[sx][sy] <<"\t";
 	initpi << pib[sx][sy] <<"\t";
 
-	initxyed << counter << "\t0\t0\t" << e[sx][sy]/SCAL << "\n";
-	inituxuy << counter << "\t0\t" << u[0][sx][sy] << "\t" << u[0][sx][sy] << "\t0\t0\t0\n";
+	//Lattice sites
+	initxyed << "0\t0\t" << e[sx][sy]/SCAL << "\n";
+	inituxuy << "0\t" << u[0][sx][sy] << "\t" << u[0][sx][sy] << "\t0\t0\t0\n";
 	++counter;
       }
   inited<<endl;

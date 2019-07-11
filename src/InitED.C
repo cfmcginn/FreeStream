@@ -61,10 +61,11 @@ int InitED(const int nLattice, const double widthFromZeroFM, const double sigma)
 
   for(int i = 0; i < nLattice; ++i){
     for(int j = 0; j < nLattice; ++j){
-      txtFile << h2->GetBinContent(i, j) << " ";
+      txtFile << prettyString(h2->GetBinContent(i, j), 10, false) << "\t";
     }
-    txtFile << std::endl;
+    //    txtFile << std::endl;
   }
+  txtFile << std::endl;
   txtFile.close();
 
   return 0;

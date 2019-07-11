@@ -19,7 +19,7 @@ MKDIR_OUTPUT=mkdir -p $(PWD)/output
 MKDIR_PDF=mkdir -p $(PWD)/pdfDir
 MKDIR_LOG=mkdir -p $(PWD)/logdir
 
-all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe
+all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/processED.exe
 
 mkdirBin:
 	$(MKDIR_BIN)
@@ -50,6 +50,9 @@ bin/FS.exe: src/FS.cpp
 
 bin/InitED.exe: src/InitED.C
 	$(CXX) $(CXXFLAGS) src/InitED.C $(INCLUDE) $(ROOT) -o bin/InitED.exe
+
+bin/processED.exe: src/processED.C
+	$(CXX) $(CXXFLAGS) src/processED.C $(INCLUDE) $(ROOT) -o bin/processED.exe
 
 clean:
 	rm -f ./*~
