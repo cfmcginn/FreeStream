@@ -506,7 +506,7 @@ void outputnewinitialconditions(double tt)
 
   char cbuffer[255];
   
-  fstream inited,initux,inituy,initpixx,initpixy,initpiyy,itime,initpi,initxyed,inituxuy;
+  fstream inited,initux,inituy,initpixx,initpixy,initpiyy,itime,initpi,initxyed,initeduxuy;
   sprintf(cbuffer,"output/time-%.2f.dat",t/fmtoGeV*AT);
   itime.open(cbuffer,ios::out);
   sprintf(cbuffer,"output/inited-%.2f.dat",t/fmtoGeV*AT);
@@ -532,9 +532,9 @@ void outputnewinitialconditions(double tt)
   //  initxyed << "LatticeN\tDummy\tDummy\ted\n";
   initxyed << "Dummy\tDummy\ted\n";
   
-  sprintf(cbuffer,"output/inituxuy-%.2f.dat",t/fmtoGeV*AT);
-  inituxuy.open(cbuffer, ios::out);
-  //  inituxuy << "LatticeN\tDummy\tux\tuy\tDummy\tDummy\tDummy\n";
+  sprintf(cbuffer,"output/initeduxuy-%.2f.dat",t/fmtoGeV*AT);
+  initeduxuy.open(cbuffer, ios::out);
+  //  initeduxuy << "LatticeN\tDummy\tux\tuy\tDummy\tDummy\tDummy\n";
 
   unsigned int counter=0;
   for (int sx=1;sx<=NUMT;sx++)
@@ -550,7 +550,7 @@ void outputnewinitialconditions(double tt)
 
 	//Lattice sites
 	initxyed << "0\t0\t" << e[sx][sy]/SCAL << "\n";
-	inituxuy << "0\t" << u[0][sx][sy] << "\t" << u[0][sx][sy] << "\t0\t0\t0\n";
+	initeduxuy << e[sx][sy]/SCAL << "\t" << u[0][sx][sy] << "\t" << u[1][sx][sy] << "\t0\t0\t0\n";
 	++counter;
       }
   inited<<endl;
@@ -572,7 +572,7 @@ void outputnewinitialconditions(double tt)
   initpi.close();
 
   initxyed.close();
-  inituxuy.close();
+  initeduxuy.close();
 }
 
 

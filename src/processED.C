@@ -14,11 +14,12 @@
 
 //Local
 #include "include/checkMakeDir.h"
+#include "include/histDefUtility.h"
 #include "include/returnFileList.h"
 #include "include/stringUtil.h"
 #include "include/plotUtilities.h"
 
-int processED(std::string inDir)
+int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/)
 {
   if(!checkDir(inDir)){
     std::cout << "Input directory \'" << inDir << "\' is invalid. return 1" << std::endl;
@@ -39,7 +40,7 @@ int processED(std::string inDir)
   //Lets filter out everything that isnt energy density
   unsigned int pos = 0;
   while(pos < fileList.size()){
-    if(fileList[pos].find("inited") == std::string::npos) fileList.erase(fileList.begin()+pos);
+    if(fileList[pos].find("inited-") == std::string::npos) fileList.erase(fileList.begin()+pos);
     else ++pos;
   }
   
@@ -126,22 +127,32 @@ int processED(std::string inDir)
     inFile.close();
   }
 
+  Double_t lowHigh = (nX*latticeSpacing)/2;
+  
   pos = 0;
   for(auto const & file : filePreProcessVect){
     TCanvas* canv_p = new TCanvas("canv_p", "", 450, 450);
-    canv_p->SetTopMargin(0.01);
-    canv_p->SetLeftMargin(0.12);
-    canv_p->SetRightMargin(0.12);
-    canv_p->SetBottomMargin(0.12);
+    canv_p->SetTopMargin(0.05);
+    canv_p->SetLeftMargin(0.10);
+    canv_p->SetRightMargin(0.18);
+    canv_p->SetBottomMargin(0.10);
 
-    TH2D* hist_p = new TH2D("hist_h", ";x;y", nX, -1, 1, nX, -1, 1);
+    TH2D* hist_p = new TH2D("hist_h", ";x;y", nX, -lowHigh, lowHigh, nX, -lowHigh, lowHigh);
+    centerTitles(hist_p);
     
+    Double_t minVal2 = 1000000000000000;
+    Double_t maxVal2 = -minVal2;
+
     for(unsigned int vI = 0; vI < file.size(); ++vI){
-      hist_p->SetBinContent(vI%nX, vI/nX, file[vI]);
+      if(file[vI] > maxVal2) maxVal2 = file[vI];
+      if(file[vI] < minVal2) minVal2 = file[vI];
+      hist_p->SetBinContent((vI%nX)+1, (vI/nX)+1, file[vI]);
     }    
 
     hist_p->SetMaximum(maxVal);
     hist_p->SetMinimum(minVal);
+    hist_p->SetMaximum(maxVal2);
+    hist_p->SetMinimum(minVal2);
     hist_p->DrawCopy("COLZ");
 
     gStyle->SetOptStat(0);
@@ -154,6 +165,9 @@ int processED(std::string inDir)
     saveName = saveName + "_" + dateStr + ".pdf";    
     quietSaveAs(canv_p, saveName);
 
+    saveName.replace(saveName.find(".pdf"), 4, ".gif");    
+    //    quietSaveAs(canv_p, saveName);
+
     delete hist_p;
     delete canv_p;
     ++pos;
@@ -164,12 +178,13 @@ int processED(std::string inDir)
 
 int main(int argc, char* argv[])
 {
-  if(argc != 2){
-    std::cout << "Usage: ./bin/processED.exe <inDir>" << std::endl;
+  if(argc < 2 || argc > 3){
+    std::cout << "Usage: ./bin/processED.exe <inDir> <latticeSpacing=0.1 default>" << std::endl;
     return 1;
   }
   
   int retVal = 0;
-  retVal += processED(argv[1]);
+  if(argc == 2) retVal += processED(argv[1]);
+  else if(argc == 3) retVal += processED(argv[1], std::stod(argv[2]));
   return retVal;
 }

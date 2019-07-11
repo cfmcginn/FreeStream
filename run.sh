@@ -33,7 +33,7 @@ echo "TotalCPU: $totalNCPU, capping at $nCPU"
 #Set this to keep computer from melting
 export OMP_NUM_THREADS=$nCPU
 
-nLattice=(80)
+nLattice=(20)
 
 mkdir -p logdir
 
@@ -46,12 +46,38 @@ do
     #DO THIS FIRST OR BUGS
     ./bin/initE.exe >& logdir/logInitE_N$i.log
     #OVERRIDE ENERGY DENSITY   
-#    ./bin/InitED.exe $i 1.0 0.3
-    ./bin/FS.exe data/params.txt >& logdir/logFS_N$i.log
-    duration=$(( SECONDS - start ))
+#    ./bin/InitED.exe $i 1.0 0.7
+    ./bin/FS.exe data/params.txt >& logdir/logFS_N$i.log &
 
+    count=$(grep "Done" logdir/logFS_N$i.log | wc -l)
+
+    while [[ $count -le 0 ]]
+    do
+	sleep 5
+
+	checkInf=$(grep "problem here"  logdir/logFS_N$i.log | wc -l)
+	if [[ $checkInf -gt 0 ]]
+	then
+	    echo "INF ERROR, BREAKING"
+
+	    psStr=$(ps | grep FS)
+	    psStr=${psStr%" pts"*}
+	    while [[ $psStr == " " ]]
+	    do
+		psStr=${psStr# }
+		psStr=${psStr% }
+	    done
+	    kill $psStr
+	    exit 1
+	fi
+	    	
+        count=$(grep "Done" logdir/logFS_N$i.log | wc -l)
+    done
+
+    duration=$(( SECONDS - start ))    
     echo "Lattice N=$i took $duration seconds..."
 done
 
+wait
 echo "Running FS.exe complete!"
     
