@@ -23,7 +23,7 @@ do
 done
 
 totalNCPU=$nCPU
-nCPU=$((nCPU - 2))
+nCPU=$((nCPU - 4))
 if [[ $nCPU -lt 1 ]]
 then
     nCPU=1
@@ -33,7 +33,7 @@ echo "TotalCPU: $totalNCPU, capping at $nCPU"
 #Set this to keep computer from melting
 export OMP_NUM_THREADS=$nCPU
 
-nLattice=(20)
+nLattice=(80)
 
 mkdir -p logdir
 
@@ -68,6 +68,8 @@ do
 		psStr=${psStr% }
 	    done
 	    kill $psStr
+	    duration=$(( SECONDS - start ))    
+	    echo "Lattice N=$i took $duration seconds on $nCPU nCPU before inf failure..."
 	    exit 1
 	fi
 	    	
@@ -75,7 +77,7 @@ do
     done
 
     duration=$(( SECONDS - start ))    
-    echo "Lattice N=$i took $duration seconds..."
+    echo "Lattice N=$i took $duration seconds on $nCPU nCPU..."
 done
 
 wait

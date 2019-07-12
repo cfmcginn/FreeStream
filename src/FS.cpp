@@ -698,7 +698,13 @@ int main(int argc, char* argv[])
 	      //printf("checking ed=%f\n",e[Middle][Middle]);
 	      outputMeasurements(t);
 	      outputnewinitialconditions(t);
-	      
+
+	      //CFM EDIT
+	      double time = t/fmtoGeV*AT;
+	      if(time >= 2){
+		std::cout << "We are terminating at 2 fm/c. return 1" << std::endl;
+		return 1;
+	      }
 	      
 	    }
 	  if ((i-1)%SNAPUPDATE==0) 
