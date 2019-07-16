@@ -19,7 +19,7 @@ MKDIR_OUTPUT=mkdir -p $(PWD)/output
 MKDIR_PDF=mkdir -p $(PWD)/pdfDir
 MKDIR_LOG=mkdir -p $(PWD)/logdir
 
-all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe
+all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe
 
 mkdirBin:
 	$(MKDIR_BIN)
@@ -54,8 +54,14 @@ bin/InitED.exe: src/InitED.C
 bin/initPointSource.exe: src/initPointSource.C
 	$(CXX) $(CXXFLAGS) src/initPointSource.C $(INCLUDE) $(ROOT) -o bin/initPointSource.exe
 
+bin/initIPGlasma.exe: src/initIPGlasma.C
+	$(CXX) $(CXXFLAGS) src/initIPGlasma.C $(INCLUDE) $(ROOT) -o bin/initIPGlasma.exe
+
 bin/processED.exe: src/processED.C
 	$(CXX) $(CXXFLAGS) src/processED.C $(INCLUDE) $(ROOT) -o bin/processED.exe
+
+bin/freestream.exe: src/freestream.C
+	$(CXX) $(CXXFLAGS) src/freestream.C $(INCLUDE) $(ROOT) -o bin/freestream.exe
 
 clean:
 	rm -f ./*~
