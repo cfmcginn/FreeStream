@@ -7,6 +7,7 @@
 
 //ROOT
 #include "TCanvas.h"
+#include "TDatime.h"
 #include "TFile.h"
 #include "TH2D.h"
 #include "TMath.h"
@@ -16,9 +17,14 @@
 
 //Local
 #include "include/checkMakeDir.h"
+#include "include/plotUtilities.h"
 
 int freestream(int itime = 2, int ievent = 0)
 {
+  TDatime* date = new TDatime();
+  const std::string dateStr = std::to_string(date->GetDate());
+  delete date;
+
   if(itime == 1) std::cout << "Selected time evo = 0.1 fm/c" << std::endl;
   if(itime == 2) std::cout << "Selected time evo = 0.2 fm/c" << std::endl;  
   
@@ -38,10 +44,9 @@ int freestream(int itime = 2, int ievent = 0)
     std::cout << "ipGlasmaFile \'" << ipGlasmaName << "\' is not found. return 1" << std::endl;
     return 1;
   }
-  
+
   sprintf(fname, ipGlasmaName.c_str());
-  TFile *fin = new TFile(fname);
-  std::cout << fin->GetName() << std::endl;
+  TFile *fin = new TFile(fname, "READ");
   //  if (!fin) std::cout << "Could not open filename = " << fname << std::endl;
 
   char hname[100];
@@ -104,7 +109,7 @@ int freestream(int itime = 2, int ievent = 0)
 
   hf->Scale(h2->Integral(lowbin,highbin,lowbin,highbin) / hf->Integral(lowbin,highbin,lowbin,highbin) );
   //  hf->Scale((1.0 / ctau) * (1.0 / (double) NR));
-
+    
   h0->GetXaxis()->SetRangeUser(zooml,zoomh);
   h0->GetYaxis()->SetRangeUser(zooml,zoomh);  
   h2->GetXaxis()->SetRangeUser(zooml,zoomh);
@@ -120,11 +125,11 @@ int freestream(int itime = 2, int ievent = 0)
   c->cd(1);
   gPad->SetRightMargin(0.15);
   h0->GetZaxis()->SetRangeUser(0.0,h0->GetMaximum());
-  h0->Draw("colz");
+  h0->DrawCopy("colz");
   c->cd(2);
   gPad->SetRightMargin(0.15);  
   h2->GetZaxis()->SetRangeUser(0.0,h2->GetMaximum());
-  h2->Draw("colz");
+  h2->DrawCopy("colz");
   c->cd(3);
   gPad->SetRightMargin(0.15);  
   hf->GetZaxis()->SetRangeUser(0.0,hf->GetMaximum());
@@ -146,10 +151,23 @@ int freestream(int itime = 2, int ievent = 0)
       hmapprof->Fill(h2->GetBinContent(ix,iy) , hf->GetBinContent(ix,iy)/h2->GetBinContent(ix,iy));      
     }
   }
-  hmap->Draw("colz");
+  hmap->DrawCopy("colz");
   hmapprof->SetMarkerStyle(20);
-  hmapprof->Draw("p,same");
-   	     
+  hmapprof->DrawCopy("p,same");
+
+  checkMakeDir("pdfDir");
+  checkMakeDir("pdfDir/" + dateStr);
+
+  std::string saveName = "pdfDir/" + dateStr + "/freestream_" + dateStr + ".pdf";
+  
+  quietSaveAs(c, saveName);
+  
+  delete hmap;
+  delete c;
+  
+  fin->Close();
+  delete fin;
+  
   return 0;
 }
 
