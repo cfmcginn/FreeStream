@@ -2,7 +2,7 @@
 IC		-2
 
 //COLLISION parameters
-RNUC		6.4
+RNUC		0.01
 ANUC		0.54
 SIGMANN		40
 
@@ -33,10 +33,10 @@ TSTART		0.36
 STEPS		40000
 
 // how many steps before recording measurables 
-UPDATE		250
+UPDATE		50
 
 // how many steps before dumping all variables to file; "taking a snapshot" 
-SNAPUPDATE	250
+SNAPUPDATE	50
 
 //freeze-out temperature 
 TF		0.17
