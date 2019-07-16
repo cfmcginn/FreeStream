@@ -3,19 +3,24 @@
 
 //cpp
 #include <iostream>
+#include <string>
 
 //ROOT
 #include "TCanvas.h"
 #include "TFile.h"
 #include "TH2D.h"
+#include "TMath.h"
+#include "TProfile.h"
+#include "TROOT.h"
 #include "TStyle.h"
 
-void freestream(int itime = 2, int ievent = 0) {
+//Local
+#include "include/checkMakeDir.h"
 
-  // itime = 1 (0.1 fm/c)
-  // itime = 2 (0.2 fm/c)
-  if (itime == 1) cout << "Selected time evo = 0.1 fm/c" << endl;
-  if (itime == 2) cout << "Selected time evo = 0.2 fm/c" << endl;  
+int freestream(int itime = 2, int ievent = 0)
+{
+  if(itime == 1) std::cout << "Selected time evo = 0.1 fm/c" << std::endl;
+  if(itime == 2) std::cout << "Selected time evo = 0.2 fm/c" << std::endl;  
   
   gROOT->SetStyle("Plain");
   gStyle->SetOptStat(0);
@@ -28,9 +33,16 @@ void freestream(int itime = 2, int ievent = 0) {
   // compare with t = T file
 
   char fname[100];
-  sprintf(fname,"IPGlasma_flat_useNucleus0_grid1024_g2mu0.10_m0.15_run0000%d.root",ievent);
+  const std::string ipGlasmaName = "input/IPGlasma_flat_useNucleus0_grid1024_g2mu0.10_m0.15_run00000.root";
+  if(!checkFile(ipGlasmaName)){
+    std::cout << "ipGlasmaFile \'" << ipGlasmaName << "\' is not found. return 1" << std::endl;
+    return 1;
+  }
+  
+  sprintf(fname, ipGlasmaName.c_str());
   TFile *fin = new TFile(fname);
-  //  if (!fin) cout << "Could not open filename = " << fname << endl;
+  std::cout << fin->GetName() << std::endl;
+  //  if (!fin) std::cout << "Could not open filename = " << fname << std::endl;
 
   char hname[100];
   sprintf(hname,"h2_evt0000%d_t00000",ievent);							     
@@ -84,9 +96,7 @@ void freestream(int itime = 2, int ievent = 0) {
 	hf->SetBinContent(newx,newy, hf->GetBinContent(newx, newy) + weight );
       }
     }
-
   }
-
 
   // integrate only over zoom range - without buffer zone of 2 * ctau
   lowbin = h0->GetXaxis()->FindBin(zooml);
@@ -102,8 +112,8 @@ void freestream(int itime = 2, int ievent = 0) {
   hf->GetXaxis()->SetRangeUser(zooml,zoomh);
   hf->GetYaxis()->SetRangeUser(zooml,zoomh);  
 
-  cout << h0->Integral() << endl;
-  cout << h2->Integral() << endl;
+  std::cout << h0->Integral() << std::endl;
+  std::cout << h2->Integral() << std::endl;
   
   TCanvas *c = new TCanvas("c","c",10,10,2700,770);
   c->Divide(4,1);
@@ -140,5 +150,19 @@ void freestream(int itime = 2, int ievent = 0) {
   hmapprof->SetMarkerStyle(20);
   hmapprof->Draw("p,same");
    	     
-  return;
+  return 0;
+}
+
+int main(int argc, char* argv[])
+{
+  if(argc < 1 || argc > 3){
+    std::cout << "Usage: ./bin/freestream.exe <itime=2 default> <ievent=0 default>. return 1" << std::endl;
+    return 1;
+  }
+  
+  int retVal = 0;
+  if(argc == 1) retVal += freestream();
+  else if(argc == 2) retVal += freestream(std::stoi(argv[1]));
+  else if(argc == 3) retVal += freestream(std::stoi(argv[1]), std::stoi(argv[2]));
+  return retVal;
 }
