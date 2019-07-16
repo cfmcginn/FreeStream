@@ -703,6 +703,7 @@ int main(int argc, char* argv[])
 	      double time = t/fmtoGeV*AT;
 	      if(time >= 2){
 		std::cout << "We are terminating at 2 fm/c. return 1" << std::endl;
+		std::cout << "Done." << std::endl;
 		return 1;
 	      }
 	      

@@ -9,6 +9,7 @@
 #include "TDatime.h"
 #include "TFile.h"
 #include "TH2D.h"
+#include "TLatex.h"
 #include "TMath.h"
 #include "TStyle.h"
 
@@ -128,16 +129,21 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/)
   }
 
   Double_t lowHigh = (nX*latticeSpacing)/2;
+
+  TLatex* label_p = new TLatex();
+  label_p->SetNDC();
+  label_p->SetTextFont(43);
+  label_p->SetTextSize(14);
   
   pos = 0;
   for(auto const & file : filePreProcessVect){
     TCanvas* canv_p = new TCanvas("canv_p", "", 450, 450);
     canv_p->SetTopMargin(0.05);
-    canv_p->SetLeftMargin(0.10);
+    canv_p->SetLeftMargin(0.12);
     canv_p->SetRightMargin(0.18);
-    canv_p->SetBottomMargin(0.10);
+    canv_p->SetBottomMargin(0.12);
 
-    TH2D* hist_p = new TH2D("hist_h", ";x;y", nX, -lowHigh, lowHigh, nX, -lowHigh, lowHigh);
+    TH2D* hist_p = new TH2D("hist_h", ";x (fm);y (fm)", nX, -lowHigh, lowHigh, nX, -lowHigh, lowHigh);
     centerTitles(hist_p);
     
     Double_t minVal2 = 1000000000000000;
@@ -147,14 +153,22 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/)
       if(file[vI] > maxVal2) maxVal2 = file[vI];
       if(file[vI] < minVal2) minVal2 = file[vI];
       hist_p->SetBinContent((vI%nX)+1, (vI/nX)+1, file[vI]);
-    }    
-
+    }
+    
     hist_p->SetMaximum(maxVal);
     hist_p->SetMinimum(minVal);
     hist_p->SetMaximum(maxVal2);
     hist_p->SetMinimum(minVal2);
-    hist_p->DrawCopy("COLZ");
+    //    hist_p->SetMaximum(.014);
+    //    hist_p->SetMinimum(0.0);
 
+    //IF DOING SURF DO ADDITIONAL OFFSETS
+    hist_p->GetXaxis()->SetTitleOffset(2.0);
+    hist_p->GetYaxis()->SetTitleOffset(2.0);
+    hist_p->DrawCopy("SURF2");
+
+    label_p->DrawLatex(0.25, .97, ("#bf{t = " + prettyString(timeStamps[pos], 2, false) + " fm/c}").c_str());
+    
     gStyle->SetOptStat(0);
     
     std::string saveName = fileList[pos];
@@ -166,12 +180,14 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/)
     quietSaveAs(canv_p, saveName);
 
     saveName.replace(saveName.find(".pdf"), 4, ".gif");    
-    //    quietSaveAs(canv_p, saveName);
+    quietSaveAs(canv_p, saveName);
 
     delete hist_p;
     delete canv_p;
     ++pos;
   }
+
+  delete label_p;
   
   return 0;
 }
