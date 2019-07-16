@@ -53,7 +53,8 @@ echo "TotalCPU: $totalNCPU, capping at $nCPU"
 #Set this to keep computer from melting
 export OMP_NUM_THREADS=$nCPU
 
-nLattice=(40)
+nLattice=(204)
+spacing=0.1487110644
 
 mkdir -p logdir
 
@@ -61,6 +62,7 @@ for i in "${nLattice[@]}"
 do
     cp data/paramsTEMPLATE.txt data/params.txt
     sed -i -e "s@NLATTICE@$i@g" data/params.txt
+    sed -i -e "s@SPACINGGEVINV@$spacing@g" data/params.txt
 
     start=$SECONDS
     #DO THIS FIRST OR BUGS
@@ -68,7 +70,9 @@ do
     #OVERRIDE ENERGY DENSITY WITH GAUSSIAN
     #    ./bin/InitED.exe $i 1.0 0.7
     #OVERRIDE ENERGY DENSITY WITH POINT SOURCE 
-    ./bin/initPointSource.exe $i
+    #./bin/initPointSource.exe $i
+    #OVERRIDE FOR IP GLASMA
+    ./bin/initIPGlasma.exe
     ./bin/FS.exe data/params.txt >& logdir/logFS_N$i.log &
 
     count=$(grep "Done" logdir/logFS_N$i.log | wc -l)

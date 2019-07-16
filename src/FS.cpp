@@ -701,8 +701,9 @@ int main(int argc, char* argv[])
 
 	      //CFM EDIT
 	      double time = t/fmtoGeV*AT;
-	      if(time >= 2){
-		std::cout << "We are terminating at 2 fm/c. return 1" << std::endl;
+	      const double cutoff = 1;
+	      if(time >= cutoff){
+		std::cout << "We are terminating at " << cutoff << " fm/c. return 1" << std::endl;
 		std::cout << "Done." << std::endl;
 		return 1;
 	      }

@@ -17,8 +17,8 @@ NUMT		NLATTICE
 //impact parameter 
 B		0.0
 
-// spatial lattice spacing in GeV^-1 
-AT		0.5076
+// spatial lattice spacing in GeV^-1, 0.5076 GeV-1 = .1 fm
+AT		SPACINGGEVINV
 
 // temporal lattice spacing 
 EPS		0.01
