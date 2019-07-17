@@ -20,7 +20,7 @@
 #include "include/stringUtil.h"
 #include "include/plotUtilities.h"
 
-int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/)
+int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOffset = 0.0/*in fm*/, double yOffset = 0.0/*in fm*/)
 {
   if(!checkDir(inDir)){
     std::cout << "Input directory \'" << inDir << "\' is invalid. return 1" << std::endl;
@@ -133,17 +133,17 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/)
   TLatex* label_p = new TLatex();
   label_p->SetNDC();
   label_p->SetTextFont(43);
-  label_p->SetTextSize(14);
+  label_p->SetTextSize(18);
   
   pos = 0;
   for(auto const & file : filePreProcessVect){
-    TCanvas* canv_p = new TCanvas("canv_p", "", 450, 450);
+    TCanvas* canv_p = new TCanvas("canv_p", "", 900, 900);
     canv_p->SetTopMargin(0.05);
     canv_p->SetLeftMargin(0.12);
     canv_p->SetRightMargin(0.18);
     canv_p->SetBottomMargin(0.12);
 
-    TH2D* hist_p = new TH2D("hist_h", ";x (fm);y (fm)", nX, -lowHigh, lowHigh, nX, -lowHigh, lowHigh);
+    TH2D* hist_p = new TH2D("hist_h", ";x (fm);y (fm)", nX, -lowHigh+xOffset, lowHigh+xOffset, nX, -lowHigh+yOffset, lowHigh+yOffset);
     centerTitles(hist_p);
     
     Double_t minVal2 = 1000000000000000;
@@ -159,13 +159,18 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/)
     hist_p->SetMinimum(minVal);
     hist_p->SetMaximum(maxVal2);
     hist_p->SetMinimum(minVal2);
-    //    hist_p->SetMaximum(.014);
-    //    hist_p->SetMinimum(0.0);
+    hist_p->SetMaximum(.2);
+    hist_p->SetMinimum(0.0);
 
     //IF DOING SURF DO ADDITIONAL OFFSETS
-    hist_p->GetXaxis()->SetTitleOffset(2.0);
-    hist_p->GetYaxis()->SetTitleOffset(2.0);
-    hist_p->DrawCopy("SURF2");
+    std::string drawOpt = "COLZ";
+
+    if(isStrSame(drawOpt, "SURF2")){
+      hist_p->GetXaxis()->SetTitleOffset(2.0);
+      hist_p->GetYaxis()->SetTitleOffset(2.0);
+    }
+    //    hist_p->DrawCopy("SURF2");
+    hist_p->DrawCopy(drawOpt.c_str());
 
     label_p->DrawLatex(0.25, .97, ("#bf{t = " + prettyString(timeStamps[pos], 2, false) + " fm/c}").c_str());
     
@@ -194,13 +199,15 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/)
 
 int main(int argc, char* argv[])
 {
-  if(argc < 2 || argc > 3){
-    std::cout << "Usage: ./bin/processED.exe <inDir> <latticeSpacing=0.1 default>" << std::endl;
+  if(argc < 2 || argc > 5){
+    std::cout << "Usage: ./bin/processED.exe <inDir> <latticeSpacing=0.1 default> <xOffset=0.0 default> <yOffset=0.0 default>" << std::endl;
     return 1;
   }
   
   int retVal = 0;
   if(argc == 2) retVal += processED(argv[1]);
   else if(argc == 3) retVal += processED(argv[1], std::stod(argv[2]));
+  else if(argc == 4) retVal += processED(argv[1], std::stod(argv[2]), std::stod(argv[3]));
+  else if(argc == 5) retVal += processED(argv[1], std::stod(argv[2]), std::stod(argv[3]), std::stod(argv[4]));
   return retVal;
 }

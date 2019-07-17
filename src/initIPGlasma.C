@@ -232,6 +232,17 @@ int initIPGlasma(const int timeInit = 0, const double xLow = 5, const double xHi
   
   outFile.close();
 
+  checkMakeDir("output");
+  checkMakeDir("output/" + dateStr);
+  saveName = "output/" + dateStr + "/initIPGlasma_" + dateStr + ".root";
+  TFile* outFile_p = new TFile(saveName.c_str(), "RECREATE");
+
+  subsetHist_p->Write("", TObject::kOverwrite);
+  subsetHistWithBuffer_p->Write("", TObject::kOverwrite);
+
+  outFile_p->Close();
+  delete outFile_p;
+  
   delete subsetHistWithBuffer_p;
   delete subsetHist_p;
   
