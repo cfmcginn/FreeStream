@@ -113,9 +113,9 @@ int compRootToDat(std::string inRootFile, std::string inDatFile, bool doPrint = 
   
   TCanvas* canv_p = new TCanvas("canv_p", "", 900, 900);
   canv_p->SetTopMargin(0.01);
-  canv_p->SetTopMargin(0.12);
-  canv_p->SetTopMargin(0.12);
-  canv_p->SetTopMargin(0.12);
+  canv_p->SetLeftMargin(0.14);
+  canv_p->SetRightMargin(0.14);
+  canv_p->SetBottomMargin(0.12);
   
   datHist_p->Divide(rootHist_p);
   datHist_p->DrawCopy("COLZ");
@@ -137,7 +137,7 @@ int compRootToDat(std::string inRootFile, std::string inDatFile, bool doPrint = 
 int main(int argc, char* argv[])
 {
   if(argc < 3 || argc > 4){
-    std::cout << "Usage: ./bin/compRootToDat.exe <inRootFile> <inDatFile>. return 1" << std::endl;
+    std::cout << "Usage: ./bin/compRootToDat.exe <inRootFile> <inDatFile> <doPrint=0 default>. return 1" << std::endl;
     return 1;
   }
   

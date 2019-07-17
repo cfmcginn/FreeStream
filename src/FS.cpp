@@ -507,32 +507,32 @@ void outputnewinitialconditions(double tt)
   char cbuffer[255];
 
   fstream inited,initux,inituy,initpixx,initpixy,initpiyy,itime,initpi,initxyed,initeduxuy;
-  sprintf(cbuffer,"output/time-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/time-%.3f.dat",t/fmtoGeV*AT);
   itime.open(cbuffer,ios::out);
-  sprintf(cbuffer,"output/inited-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/inited-%.3f.dat",t/fmtoGeV*AT);
   inited.open(cbuffer, ios::out);
-  sprintf(cbuffer,"output/initux-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/initux-%.3f.dat",t/fmtoGeV*AT);
   initux.open(cbuffer, ios::out);
-  sprintf(cbuffer,"output/inituy-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/inituy-%.3f.dat",t/fmtoGeV*AT);
   inituy.open(cbuffer, ios::out);
-  sprintf(cbuffer,"output/initpixx-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/initpixx-%.3f.dat",t/fmtoGeV*AT);
   initpixx.open(cbuffer, ios::out);
-  sprintf(cbuffer,"output/initpixy-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/initpixy-%.3f.dat",t/fmtoGeV*AT);
   initpixy.open(cbuffer, ios::out);
-  sprintf(cbuffer,"output/initpiyy-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/initpiyy-%.3f.dat",t/fmtoGeV*AT);
   initpiyy.open(cbuffer, ios::out);
-  sprintf(cbuffer,"output/initpi-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/initpi-%.3f.dat",t/fmtoGeV*AT);
   initpi.open(cbuffer, ios::out);
 
   //CFM MOD OUTPUT
-  sprintf(cbuffer,"output/initxyed-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/initxyed-%.3f.dat",t/fmtoGeV*AT);
   initxyed.open(cbuffer, ios::out);
 
   //REMOVE LATTICE N FOR READABLE OUTPUT
   //  initxyed << "LatticeN\tDummy\tDummy\ted\n";
   initxyed << "Dummy\tDummy\ted\n";
   
-  sprintf(cbuffer,"output/initeduxuy-%.2f.dat",t/fmtoGeV*AT);
+  sprintf(cbuffer,"output/initeduxuy-%.3f.dat",t/fmtoGeV*AT);
   initeduxuy.open(cbuffer, ios::out);
   //  initeduxuy << "LatticeN\tDummy\tux\tuy\tDummy\tDummy\tDummy\n";
 

@@ -1,4 +1,6 @@
+//Author Chris McGinn
 //cpp
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -145,22 +147,26 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
 
     TH2D* hist_p = new TH2D("hist_h", ";x (fm);y (fm)", nX, -lowHigh+xOffset, lowHigh+xOffset, nX, -lowHigh+yOffset, lowHigh+yOffset);
     centerTitles(hist_p);
-    
-    Double_t minVal2 = 1000000000000000;
-    Double_t maxVal2 = -minVal2;
 
+    std::vector<double> contents;
     for(unsigned int vI = 0; vI < file.size(); ++vI){
-      if(file[vI] > maxVal2) maxVal2 = file[vI];
-      if(file[vI] < minVal2) minVal2 = file[vI];
       hist_p->SetBinContent((vI%nX)+1, (vI/nX)+1, file[vI]);
+
+      contents.push_back(file[vI]);
     }
+
+    std::sort(std::begin(contents), std::end(contents));
     
+    Double_t minVal2 = contents[0]/2.;
+    Int_t maxPos = TMath::Min(997*contents.size()/1000, contents.size()-1);
+    Double_t maxVal2 = contents[maxPos];
+
     hist_p->SetMaximum(maxVal);
     hist_p->SetMinimum(minVal);
     hist_p->SetMaximum(maxVal2);
     hist_p->SetMinimum(minVal2);
-    hist_p->SetMaximum(.2);
-    hist_p->SetMinimum(0.0);
+    //    hist_p->SetMaximum(.2);
+    //    hist_p->SetMinimum(0.0);
 
     //IF DOING SURF DO ADDITIONAL OFFSETS
     std::string drawOpt = "COLZ";
