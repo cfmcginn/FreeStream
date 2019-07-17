@@ -186,6 +186,20 @@ int initIPGlasma(const int timeInit = 0, const double xLow = 5, const double xHi
     else binsXFull[nBinsXFull] = binsX[bIX - nLatticeBuffer];   
   }
 
+  std::cout << "BinsX: " << nBinsX << std::endl;
+  for(Int_t bIX = 0; bIX < nBinsX; ++bIX){
+    std::cout << binsX[bIX] << ", ";
+  }
+  std::cout << binsX[nBinsX] << "." << std::endl;
+  std::cout << std::endl;
+
+  std::cout << "BinsXFull: " << nBinsXFull << std::endl;
+  for(Int_t bIX = 0; bIX < nBinsXFull; ++bIX){
+    std::cout << binsXFull[bIX] << ", ";
+  }
+  std::cout << binsXFull[nBinsXFull] << "." << std::endl;
+  std::cout << std::endl;
+
   for(Int_t bIY = 0; bIY < nLatticeBuffer*2 + nBinsY + 1; ++bIY){
     ++nBinsYFull;
 
@@ -200,7 +214,7 @@ int initIPGlasma(const int timeInit = 0, const double xLow = 5, const double xHi
 
   for(Int_t bIX = 0; bIX < nBinsXFull; ++bIX){
     for(Int_t bIY = 0; bIY < nBinsYFull; ++bIY){
-      if(bIX <= nLatticeBuffer) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
+      if(bIX < nLatticeBuffer) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
       else if(bIY <= nLatticeBuffer) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
       else if(bIX > nLatticeBuffer+nBinsX) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
       else if(bIY > nLatticeBuffer+nBinsX) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
