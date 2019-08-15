@@ -1,4 +1,4 @@
-#!/bin.bash
+#!/bin/bash
 
 #check we can correctly grab number of cpu
 count=$(lscpu | grep "CPU(s):" | wc -l)
@@ -9,6 +9,7 @@ then
     exit 1
 fi
 
+DATE=`date +%Y%m%d`
 
 goodInput=0
 while [[ $goodInput -eq 0 ]]
@@ -54,9 +55,11 @@ echo "TotalCPU: $totalNCPU, capping at $nCPU"
 export OMP_NUM_THREADS=$nCPU
 
 nLattice=(204)
+#nLattice=(51)
 spacing=0.1487110644
+#spacing=0.5948442576
 
-mkdir -p logdir
+mkdir -p logdir/$DATE
 
 for i in "${nLattice[@]}"
 do
@@ -66,22 +69,22 @@ do
 
     start=$SECONDS
     #DO THIS FIRST OR BUGS
-    ./bin/initE.exe >& logdir/logInitE_N$i.log
+    ./bin/initE.exe >& logdir/$DATE/logInitE_N$i.log
     #OVERRIDE ENERGY DENSITY WITH GAUSSIAN
     #    ./bin/InitED.exe $i 1.0 0.7
     #OVERRIDE ENERGY DENSITY WITH POINT SOURCE 
     #./bin/initPointSource.exe $i
     #OVERRIDE FOR IP GLASMA
     ./bin/initIPGlasma.exe
-    ./bin/FS.exe data/params.txt >& logdir/logFS_N$i.log &
+    ./bin/FS.exe data/params.txt >& logdir/$DATE/logFS_N$i.log &
 
-    count=$(grep "Done" logdir/logFS_N$i.log | wc -l)
+    count=$(grep "Done" logdir/$DATE/logFS_N$i.log | wc -l)
 
     while [[ $count -le 0 ]]
     do
 	sleep 5
 
-	checkInf=$(grep "problem here"  logdir/logFS_N$i.log | wc -l)
+	checkInf=$(grep "problem here"  logdir/$DATE/logFS_N$i.log | wc -l)
 	if [[ $checkInf -gt 0 ]]
 	then
 	    echo "INF ERROR, BREAKING"
@@ -99,7 +102,7 @@ do
 	    exit 1
 	fi
 	    	
-        count=$(grep "Done" logdir/logFS_N$i.log | wc -l)
+        count=$(grep "Done" logdir/$DATE/logFS_N$i.log | wc -l)
     done
 
     duration=$(( SECONDS - start ))    

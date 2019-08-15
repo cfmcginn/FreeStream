@@ -23,7 +23,7 @@ AT		SPACINGGEVINV
 // temporal lattice spacing 
 EPS		0.01
 
-//initial starting time in fm over c 
+//initial starting time in fm over c, orig 0.25
 TINIT		 0.25
 
 //initial starting temperature in GeV 
@@ -33,10 +33,10 @@ TSTART		0.36
 STEPS		40000
 
 // how many steps before recording measurables 
-UPDATE		50
+UPDATE		250
 
 // how many steps before dumping all variables to file; "taking a snapshot" 
-SNAPUPDATE	50
+SNAPUPDATE	250
 
 //freeze-out temperature 
 TF		0.17

@@ -9,10 +9,12 @@
 //ROOT
 #include "TCanvas.h"
 #include "TDatime.h"
+#include "TF1.h"
 #include "TFile.h"
 #include "TH2D.h"
 #include "TLatex.h"
 #include "TMath.h"
+#include "TPad.h"
 #include "TStyle.h"
 
 //Local
@@ -22,7 +24,7 @@
 #include "include/stringUtil.h"
 #include "include/plotUtilities.h"
 
-int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOffset = 0.0/*in fm*/, double yOffset = 0.0/*in fm*/)
+int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOffset = 0.0/*in fm*/, double yOffset = 0.0/*in fm*/, bool doCentralLightCone = false)
 {
   if(!checkDir(inDir)){
     std::cout << "Input directory \'" << inDir << "\' is invalid. return 1" << std::endl;
@@ -81,7 +83,13 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
   for(auto const & file : fileList){
     std::cout << " " << file << std::endl;
   }
+  std::cout << "Corresponding to times: " << std::endl;
+  for(auto const & time : timeStamps){
+    std::cout << " " << prettyString(time, 3, false) << " fm/c" << std::endl;
+  }
 
+  double baseTime = timeStamps[0];
+  
   //Process the first file to get a handle on the binning
   Int_t total = 0;
 
@@ -148,6 +156,8 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
     TH2D* hist_p = new TH2D("hist_h", ";x (fm);y (fm)", nX, -lowHigh+xOffset, lowHigh+xOffset, nX, -lowHigh+yOffset, lowHigh+yOffset);
     centerTitles(hist_p);
 
+    TH2D* lightCone_p = new TH2D("lightCone_p", "", 10*nX, -lowHigh+xOffset, lowHigh+xOffset, 10*nX, -lowHigh+yOffset, lowHigh+yOffset);
+    
     std::vector<double> contents;
     for(unsigned int vI = 0; vI < file.size(); ++vI){
       hist_p->SetBinContent((vI%nX)+1, (vI/nX)+1, file[vI]);
@@ -161,6 +171,10 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
     Int_t maxPos = TMath::Min(997*contents.size()/1000, contents.size()-1);
     Double_t maxVal2 = contents[maxPos];
 
+    if(TMath::Abs(contents[0] - contents[maxPos]) < 0.000001){
+      maxVal2 = contents[contents.size()-1] * 1.1;
+    }
+    
     hist_p->SetMaximum(maxVal);
     hist_p->SetMinimum(minVal);
     hist_p->SetMaximum(maxVal2);
@@ -176,9 +190,53 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
       hist_p->GetYaxis()->SetTitleOffset(2.0);
     }
     //    hist_p->DrawCopy("SURF2");
+    //    gStyle->SetPalette(kRainBow);
     hist_p->DrawCopy(drawOpt.c_str());
 
     label_p->DrawLatex(0.25, .97, ("#bf{t = " + prettyString(timeStamps[pos], 2, false) + " fm/c}").c_str());
+
+    if(doCentralLightCone){
+      double radius = timeStamps[pos] - baseTime;
+
+      if(radius > 0.001){ 
+	for(Int_t bIX = 0; bIX < lightCone_p->GetXaxis()->GetNbins(); ++bIX){
+	  Double_t xLow = lightCone_p->GetXaxis()->GetBinLowEdge(bIX+1);
+	  Double_t xHigh = lightCone_p->GetXaxis()->GetBinLowEdge(bIX+2);
+	  
+	  for(Int_t bIY = 0; bIY < lightCone_p->GetYaxis()->GetNbins(); ++bIY){
+	    Double_t yLow = lightCone_p->GetYaxis()->GetBinLowEdge(bIY+1);
+	    Double_t yHigh = lightCone_p->GetYaxis()->GetBinLowEdge(bIY+2);
+
+	    bool goodBin = false;
+
+	    if(TMath::Abs(xOffset - xLow) < radius){
+	      Double_t y1 = yOffset + TMath::Sqrt(radius*radius - (xLow - xOffset)*(xLow - xOffset));
+	      Double_t y3 = yOffset - TMath::Sqrt(radius*radius - (xLow - xOffset)*(xLow - xOffset));
+
+	      if(y1 > yLow && y1 < yHigh) goodBin = true;
+	      if(y3 > yLow && y3 < yHigh) goodBin = true;
+	    }
+	    
+	    if(TMath::Abs(xOffset - xHigh) < radius){
+	      Double_t y2 = yOffset + TMath::Sqrt(radius*radius - (xHigh - xOffset)*(xHigh - xOffset));
+	      Double_t y4 = yOffset - TMath::Sqrt(radius*radius - (xHigh - xOffset)*(xHigh - xOffset));
+
+	      if(y2 > yLow && y2 < yHigh) goodBin = true;
+	      if(y4 > yLow && y4 < yHigh) goodBin = true;
+	    }
+
+	    if(goodBin) lightCone_p->SetBinContent(bIX+1, bIY+1, hist_p->GetMaximum());
+	    else lightCone_p->SetBinContent(bIX+1, bIY+1, 0);
+	    lightCone_p->SetBinError(bIX+1, bIY+1, 0);
+	  }
+	}
+
+	//	gStyle->SetPalette(kRust);
+	lightCone_p->DrawCopy("SAME");
+
+	std::cout << "INT: " << lightCone_p->Integral() << std::endl;
+      }
+    }
     
     gStyle->SetOptStat(0);
     
@@ -194,7 +252,9 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
     quietSaveAs(canv_p, saveName);
 
     delete hist_p;
+    delete lightCone_p;
     delete canv_p;
+    
     ++pos;
   }
 
@@ -205,8 +265,8 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
 
 int main(int argc, char* argv[])
 {
-  if(argc < 2 || argc > 5){
-    std::cout << "Usage: ./bin/processED.exe <inDir> <latticeSpacing=0.1 default> <xOffset=0.0 default> <yOffset=0.0 default>" << std::endl;
+  if(argc < 2 || argc > 6){
+    std::cout << "Usage: ./bin/processED.exe <inDir> <latticeSpacing=0.1 default> <xOffset=0.0 default> <yOffset=0.0 default> <doCentralLightCone=false default>" << std::endl;
     return 1;
   }
   
@@ -215,5 +275,6 @@ int main(int argc, char* argv[])
   else if(argc == 3) retVal += processED(argv[1], std::stod(argv[2]));
   else if(argc == 4) retVal += processED(argv[1], std::stod(argv[2]), std::stod(argv[3]));
   else if(argc == 5) retVal += processED(argv[1], std::stod(argv[2]), std::stod(argv[3]), std::stod(argv[4]));
+  else if(argc == 6) retVal += processED(argv[1], std::stod(argv[2]), std::stod(argv[3]), std::stod(argv[4]), std::stoi(argv[5]));
   return retVal;
 }
