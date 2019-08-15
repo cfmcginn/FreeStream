@@ -19,7 +19,7 @@ MKDIR_OUTPUT=mkdir -p $(PWD)/output
 MKDIR_PDF=mkdir -p $(PWD)/pdfDir
 MKDIR_LOG=mkdir -p $(PWD)/logdir
 
-all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe bin/compRootToDat.exe
+all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe bin/compRootToDat.exe bin/compareIPFS.exe
 
 mkdirBin:
 	$(MKDIR_BIN)
@@ -65,6 +65,9 @@ bin/freestream.exe: src/freestream.C
 
 bin/compRootToDat.exe: src/compRootToDat.C
 	$(CXX) $(CXXFLAGS) src/compRootToDat.C $(INCLUDE) $(ROOT) -o bin/compRootToDat.exe
+
+bin/compareIPFS.exe: src/compareIPFS.C
+	$(CXX) $(CXXFLAGS) src/compareIPFS.C $(INCLUDE) $(ROOT) -o bin/compareIPFS.exe
 
 clean:
 	rm -f ./*~
