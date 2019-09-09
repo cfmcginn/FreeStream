@@ -8,6 +8,13 @@ endif
 
 INCLUDE=-I$(PWD)
 
+SPHENIXPATH=/opt/sphenix/core/gsl/include
+
+ifneq ("$(wildcard $(SPHENIXPATH))","")
+  $(echo ADDING $(SPHENIXPATH))
+  INCLUDE+=-I/opt/sphenix/core/gsl/include -L/opt/sphenix/core/gsl/lib/
+endif
+
 FDASH=-fpermissive -fopenmp
 LDASH=-lgsl -lgslcblas
 
