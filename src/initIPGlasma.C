@@ -172,12 +172,13 @@ int initIPGlasma(const int timeInit = 0, const double xLow = 5, const double xHi
     }
   }
       
-
   
   TH2D* subsetHist_p = new TH2D("subsetHist_h", ";x (fm);y (fm)", nBinsX, binsX, nBinsY, binsY);
   setSumW2(subsetHist_p);
   centerTitles(subsetHist_p);
   macroHistToSubsetHist(initHist_p, subsetHist_p, true);
+
+  std::cout << "Precheck 1: " << subsetHist_p->GetBinContent(1, 1) << std::endl;
   
   TCanvas* canv_p = new TCanvas("canv_p", "", 450, 450);
   canv_p->SetTopMargin(0.01);
@@ -241,7 +242,7 @@ int initIPGlasma(const int timeInit = 0, const double xLow = 5, const double xHi
   for(Int_t bIX = 0; bIX < nBinsXFull; ++bIX){
     for(Int_t bIY = 0; bIY < nBinsYFull; ++bIY){
       if(bIX < nLatticeBuffer) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
-      else if(bIY <= nLatticeBuffer) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
+      else if(bIY < nLatticeBuffer) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
       else if(bIX > nLatticeBuffer+nBinsX) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
       else if(bIY > nLatticeBuffer+nBinsX) subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, 0.0);
       else subsetHistWithBuffer_p->SetBinContent(bIX+1, bIY+1, subsetHist_p->GetBinContent(bIX+1-nLatticeBuffer, bIY+1-nLatticeBuffer));
@@ -249,6 +250,8 @@ int initIPGlasma(const int timeInit = 0, const double xLow = 5, const double xHi
       subsetHistWithBuffer_p->SetBinError(bIX+1, bIY+1, 0.0);
     }    
   }
+
+  std::cout << "Precheck 2: " << subsetHistWithBuffer_p->GetBinContent(1, 1) << std::endl;
 
   canv_p = new TCanvas("canv_p", "", 450, 450);
   canv_p->SetTopMargin(0.01);
