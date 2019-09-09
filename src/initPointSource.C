@@ -14,10 +14,10 @@
 #include "include/getLinBins.h"
 #include "include/plotUtilities.h"
 
-int InitED(const int nLattice)
+int InitED(const int nLattice, const double e0)
 {
   // some constants
-  const double e0 = 1.4; //based on peak in gaus case
+  // const double e0 = 140.; //based on peak in gaus case
 
   std::ofstream txtFile; // file to put text values of function in     
   txtFile.open("input/inited.dat");
@@ -29,7 +29,7 @@ int InitED(const int nLattice)
   }
 
   std::cout << "Creating lattice " << nLattice << "x" << nLattice << "." << std::endl;
-  std::cout << "Point source of " << prettyString(e0, 2, false) << " magnitude." << std::endl;
+  std::cout << "Point source of " << e0 << " magnitude." << std::endl;
   
   for(int i = 0; i < nLattice; ++i){
     for(int j = 0; j < nLattice; ++j){
@@ -47,12 +47,12 @@ int InitED(const int nLattice)
 
 int main(int argc, char* argv[])
 {
-  if(argc != 2){
-    std::cout << "Usage: ./bin/initPointSource.exe <nLattice> . return 1" << std::endl;
+  if(argc != 3){
+    std::cout << "Usage: ./bin/initPointSource.exe <nLattice> <pointSrcMag>. return 1" << std::endl;
     return 1;
   }
 
   int retVal = 0;
-  retVal += InitED(std::stoi(argv[1]));
+  retVal += InitED(std::stoi(argv[1]), std::stod(argv[2]));
   return retVal;  
 }

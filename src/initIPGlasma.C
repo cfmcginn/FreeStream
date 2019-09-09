@@ -148,6 +148,32 @@ int initIPGlasma(const int timeInit = 0, const double xLow = 5, const double xHi
     binsY[nBinsY] = initHist_p->GetYaxis()->GetBinLowEdge(bIY+1);
   }
 
+  Double_t totalED = 0.0;
+  Double_t totalN = 0.0;
+  for(Int_t bIX = 0; bIX < initHist_p->GetXaxis()->GetNbins(); ++bIX){
+    for(Int_t bIY = 0; bIY < initHist_p->GetYaxis()->GetNbins(); ++bIY){
+      totalED += initHist_p->GetBinContent(bIX+1, bIY+1);
+      ++totalN;
+    }    
+  }
+
+  Double_t aveED = totalED/totalN;
+  std::cout << "AVERAGE ED: " << aveED << std::endl;
+  const Double_t targetAveED = 0.013;
+  const Double_t factorToED = 1;//targetAveED/aveED;
+
+  for(Int_t bIX = 0; bIX < initHist_p->GetXaxis()->GetNbins(); ++bIX){
+    for(Int_t bIY = 0; bIY < initHist_p->GetYaxis()->GetNbins(); ++bIY){
+      Double_t newVal = initHist_p->GetBinContent(bIX+1, bIY+1)*factorToED;
+      Double_t newErr = initHist_p->GetBinError(bIX+1, bIY+1)*factorToED;
+
+      initHist_p->SetBinContent(bIX+1, bIY+1, newVal);
+      initHist_p->SetBinError(bIX+1, bIY+1, newErr);
+    }
+  }
+      
+
+  
   TH2D* subsetHist_p = new TH2D("subsetHist_h", ";x (fm);y (fm)", nBinsX, binsX, nBinsY, binsY);
   setSumW2(subsetHist_p);
   centerTitles(subsetHist_p);

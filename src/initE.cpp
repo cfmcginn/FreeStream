@@ -1259,8 +1259,8 @@ void setInitialConditions()
 	    {
 	      //EDIT CFM UNUSED VARIABLES
 	      //	      double x = (sx-Middle)*AT/fmtoGeV;
-	      //	      double y = (sy-Middle)*AT/fmtoGeV;
-	      e[sx][sy]=e0;
+	      //	      double y = (sy-Middle)*AT/fmtoGeV;	
+      e[sx][sy]=e0;
 	    }
 
 	  }

@@ -1,14 +1,16 @@
 #ifndef RETURNFILELIST_H
 #define RETURNFILELIST_H
 
+//cpp
 #include <iostream>
-
-#include <vector>
 #include <string>
+#include <vector>
 
+//File-system specific
 #include "dirent.h"
 #include "sys/stat.h"
 
+//Local
 #include "include/checkMakeDir.h"
 
 const unsigned int listSizeLimit = 10000;

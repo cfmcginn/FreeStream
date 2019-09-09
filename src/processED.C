@@ -24,13 +24,15 @@
 #include "include/stringUtil.h"
 #include "include/plotUtilities.h"
 
-int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOffset = 0.0/*in fm*/, double yOffset = 0.0/*in fm*/, bool doCentralLightCone = false)
+int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOffset = 0.0/*in fm*/, double yOffset = 0.0/*in fm*/, bool doCentralLightCone = false, std::string sortStr = "inited-")
 {
   if(!checkDir(inDir)){
     std::cout << "Input directory \'" << inDir << "\' is invalid. return 1" << std::endl;
     return 1;
   }
 
+  std::cout << "FILE, LINE: " << __FILE__ << ", " << __LINE__ << std::endl;
+  
   std::vector<std::string> fileList = returnFileList(inDir, ".dat");
   std::vector<double> timeStamps;
   if(fileList.size() == 0){
@@ -42,12 +44,16 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
   const std::string dateStr = std::to_string(date->GetDate());
   delete date;
 
+  std::cout << "FILE, LINE: " << __FILE__ << ", " << __LINE__ << std::endl;  
+
   //Lets filter out everything that isnt energy density
   unsigned int pos = 0;
   while(pos < fileList.size()){
-    if(fileList[pos].find("inited-") == std::string::npos) fileList.erase(fileList.begin()+pos);
+    if(fileList[pos].find(sortStr) == std::string::npos) fileList.erase(fileList.begin()+pos);
     else ++pos;
   }
+
+  std::cout << "FILE, LINE: " << __FILE__ << ", " << __LINE__ << std::endl;
   
   //Now extract time from each file name and sort
   for(auto const & file : fileList){
@@ -160,7 +166,7 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
     
     std::vector<double> contents;
     for(unsigned int vI = 0; vI < file.size(); ++vI){
-      hist_p->SetBinContent((vI%nX)+1, (vI/nX)+1, file[vI]);
+      hist_p->SetBinContent((vI/nX)+1, (vI%nX)+1, file[vI]);
 
       contents.push_back(file[vI]);
     }
@@ -179,7 +185,7 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
     hist_p->SetMinimum(minVal);
     hist_p->SetMaximum(maxVal2);
     hist_p->SetMinimum(minVal2);
-    //    hist_p->SetMaximum(.2);
+    //    hist_p->SetMaximum(0.08);
     //    hist_p->SetMinimum(0.0);
 
     //IF DOING SURF DO ADDITIONAL OFFSETS
@@ -193,7 +199,7 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
     //    gStyle->SetPalette(kRainBow);
     hist_p->DrawCopy(drawOpt.c_str());
 
-    label_p->DrawLatex(0.25, .97, ("#bf{t = " + prettyString(timeStamps[pos], 2, false) + " fm/c}").c_str());
+    label_p->DrawLatex(0.25, .97, ("#bf{t = " + prettyString(timeStamps[pos], 5, false) + " fm/c}").c_str());
 
     if(doCentralLightCone){
       double radius = timeStamps[pos] - baseTime;

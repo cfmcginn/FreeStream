@@ -19,7 +19,7 @@ MKDIR_OUTPUT=mkdir -p $(PWD)/output
 MKDIR_PDF=mkdir -p $(PWD)/pdfDir
 MKDIR_LOG=mkdir -p $(PWD)/logdir
 
-all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe bin/compRootToDat.exe bin/compareIPFS.exe
+all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe bin/compRootToDat.exe bin/compareIPFS.exe bin/compDat.exe bin/checkInitFiles.exe bin/rescaleInitED.exe
 
 mkdirBin:
 	$(MKDIR_BIN)
@@ -68,6 +68,15 @@ bin/compRootToDat.exe: src/compRootToDat.C
 
 bin/compareIPFS.exe: src/compareIPFS.C
 	$(CXX) $(CXXFLAGS) src/compareIPFS.C $(INCLUDE) $(ROOT) -o bin/compareIPFS.exe
+
+bin/compDat.exe: src/compDat.C
+	$(CXX) $(CXXFLAGS) src/compDat.C $(INCLUDE) $(ROOT) -o bin/compDat.exe
+
+bin/checkInitFiles.exe: src/checkInitFiles.C
+	$(CXX) $(CXXFLAGS) src/checkInitFiles.C $(INCLUDE) $(ROOT) -o bin/checkInitFiles.exe
+
+bin/rescaleInitED.exe: src/rescaleInitED.C
+	$(CXX) $(CXXFLAGS) src/rescaleInitED.C $(INCLUDE) $(ROOT) -o bin/rescaleInitED.exe
 
 clean:
 	rm -f ./*~

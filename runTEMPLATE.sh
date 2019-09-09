@@ -87,16 +87,16 @@ echo "TotalCPU: $totalNCPU, capping at $nCPU"
 #Set this to keep computer from melting
 export OMP_NUM_THREADS=$nCPU
 
-nLattice=(204)
+nLattice=(41)
 spacing=0.1487110644
 #spacing=0.5076
 
-pointMag=.0012094
+pointMag=POINTMAGIN
 pointMagStr=$pointMag
 
 #Lets initialize input energy density
-doPointSrc=0
-doIPGlasma=1
+doPointSrc=1
+doIPGlasma=0
 doDefault=0
 boolArr=($doPointSrc $doIPGlasma $doDefault)
 boolTot=0
@@ -144,7 +144,7 @@ do
     sed -i -e "s@NLATTICE@$i@g" data/params.txt
     sed -i -e "s@SPACINGGEVINV@$spacing@g" data/params.txt
 
-    logName=N"$i"_
+    logName=_N"$i"_
     if [[ $doPointSrc -eq 1 ]]
     then
 	logName="$logName"PointMag$pointMagStr
@@ -158,7 +158,7 @@ do
 	
     start=$SECONDS
     #DO THIS FIRST OR BUGS
-    ./bin/initE.exe >& logdir/$DATE/logInitE_$logName.log
+    ./bin/initE.exe >& logdir/$DATE/logInitE$logName.log
 
     #OVERRIDE ENERGY DENSITY WITH X
     #    ./bin/InitED.exe $i 1.0 0.7
@@ -168,23 +168,21 @@ do
 	./bin/initPointSource.exe $i $pointMag
     elif [[ $doIPGlasma -eq 1 ]]
     then
-	./bin/initIPGlasma.exe 0 5 10 5 10 0.5
-	./bin/rescaleInitED.exe data/params.txt input/inited.dat input/tempToEnergyDensityLUT.txt
-#	exit 1
+	./bin/initIPGlasma.exe 0 9 10 5 6 0.1
     fi
 
     #copy over the initial conditions for later comparison
-    cp input/inited.dat output/inited--0.100_$logName.dat
+    cp input/inited.dat output/inited--0.100$logName.dat
     #Process & background
-    ./bin/FS.exe data/params.txt $logName >& logdir/$DATE/logFS_$logName.log &
+    ./bin/FS.exe data/params.txt PointSrc$pointMag >& logdir/$DATE/logFS$logName.log &
 
     #Following is for inf handling and early termination
-    count=$(grep "Done" logdir/$DATE/logFS_$logName.log | wc -l)
+    count=$(grep "Done" logdir/$DATE/logFS$logName.log | wc -l)
     while [[ $count -le 0 ]]
     do
 	sleep 5
 
-	checkInf=$(grep "problem here"  logdir/$DATE/logFS_$logName.log | wc -l)
+	checkInf=$(grep "problem here"  logdir/$DATE/logFS$logName.log | wc -l)
 	if [[ $checkInf -gt 0 ]]
 	then
 	    echo "INF ERROR, BREAKING"
@@ -202,8 +200,8 @@ do
 	    exit 1
 	fi
 	    	
-        count=$(grep "Done" logdir/$DATE/logFS_$logName.log | wc -l)
-	count2=$(grep "TERMINATING" logdir/$DATE/logFS_$logName.log | wc -l)
+        count=$(grep "Done" logdir/$DATE/logFS$logName.log | wc -l)
+	count2=$(grep "TERMINATING" logdir/$DATE/logFS$logName.log | wc -l)
 	count=$((count + $count2))
     done
 

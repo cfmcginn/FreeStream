@@ -385,12 +385,16 @@ void setInitialConditions()
   initpiyy.open("input/initpiyy.dat", ios::in);
   initpi.open("input/initpi.dat", ios::in);
   
- 
+
+  std::cout << "Initialize CHECK: " << std::endl;
   for (int sx=1;sx<=NUMT;sx++)
     for (int sy=1;sy<=NUMT;sy++)
       {
+
+	
 	inited >> e[sx][sy];
 	e[sx][sy]*=SCAL;
+	std::cout << e[sx][sy] << " ";
 	initux >> u[0][sx][sy];
 	inituy >> u[1][sx][sy];
 	initpixx >> pixx[sx][sy];
@@ -398,6 +402,8 @@ void setInitialConditions()
 	initpiyy >> piyy[sx][sy];
 	initpi >> pib[sx][sy];
       }
+
+  std::cout << std::endl;
  
   itime >> TINIT;
 
@@ -744,11 +750,24 @@ double pi (int delta,int beta,int sx,int sy)
 }
 
 
-void outputMeasurements(double t)
+void outputMeasurements(double t, int outStep = 0)
 {
   cout.precision(5);
   int dwidth = 13;
-  cout.width(dwidth); cout << t/fmtoGeV*AT;
+
+  std::string outStr = "Step" + std::to_string(outStep);
+  std::string outStr2 = std::to_string(t/fmtoGeV*AT);
+  if(outStr2.find(".") != std::string::npos){
+    while(outStr2.substr(outStr2.size()-1, 1).find("0") != std::string::npos){
+      outStr2 = outStr2.substr(0, outStr2.size()-1);
+    }
+  }
+  
+  std::string outStr3 = "";
+  while(outStr.size() + outStr2.size() + outStr3.size() < dwidth){outStr3 = outStr3 + " ";}
+
+  std::cout << outStr << outStr3 << outStr2;
+  //  cout.width(dwidth); cout << outStr << t/fmtoGeV*AT;
   //globali=geti(e[Middle][Middle]);
   //globalx=getx(globali,e[Middle][Middle]);
 //   double ex=anisospace();
