@@ -26,7 +26,7 @@ MKDIR_OUTPUT=mkdir -p $(PWD)/output
 MKDIR_PDF=mkdir -p $(PWD)/pdfDir
 MKDIR_LOG=mkdir -p $(PWD)/logdir
 
-all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe bin/compRootToDat.exe bin/compareIPFS.exe bin/compDat.exe bin/checkInitFiles.exe bin/rescaleInitED.exe
+all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe bin/compRootToDat.exe bin/compareIPFS.exe bin/compDat.exe bin/checkInitFiles.exe bin/rescaleInitED.exe bin/checkED.exe
 
 mkdirBin:
 	$(MKDIR_BIN)
@@ -84,6 +84,9 @@ bin/checkInitFiles.exe: src/checkInitFiles.C
 
 bin/rescaleInitED.exe: src/rescaleInitED.C
 	$(CXX) $(CXXFLAGS) src/rescaleInitED.C $(INCLUDE) $(ROOT) -o bin/rescaleInitED.exe
+
+bin/checkED.exe: src/checkED.C
+	$(CXX) $(CXXFLAGS) src/checkED.C $(INCLUDE) -o bin/checkED.exe
 
 clean:
 	rm -f ./*~
