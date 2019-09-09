@@ -1,7 +1,10 @@
 #ifndef CHECKMAKEDIR_H
 #define CHECKMAKEDIR_H
 
+//Traditional cpp
+#include <iostream>
 #include <string>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -66,5 +69,15 @@ void invalidFileMessage(const std::string inFile)
   std::cout << "Input \'" << inFile << "\' is not a valid file. return" << std::endl;
   return;
 }
+
+bool fileCheckWithMsg(std::string inFileName, std::string appStr, std::string retStr)
+{
+  if(!checkFile(inFileName) || inFileName.find(appStr) == std::string::npos){
+    std::cout << "Given inFileName \'" << inFileName << "\' is invalid. return " << retStr << std::endl;
+    return false;
+  }
+  return true;
+}
+
 
 #endif

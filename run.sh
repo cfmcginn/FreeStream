@@ -87,7 +87,7 @@ echo "TotalCPU: $totalNCPU, capping at $nCPU"
 #Set this to keep computer from melting
 export OMP_NUM_THREADS=$nCPU
 
-nLattice=(204)
+nLattice=(40)
 spacing=0.1487110644
 #spacing=0.5076
 
@@ -168,11 +168,19 @@ do
 	./bin/initPointSource.exe $i $pointMag
     elif [[ $doIPGlasma -eq 1 ]]
     then
-	./bin/initIPGlasma.exe 0 5 10 5 10 0.5
+	./bin/initIPGlasma.exe 0 9 10 5 6 0.1
 	./bin/rescaleInitED.exe data/params.txt input/inited.dat input/tempToEnergyDensityLUT.txt
-#	exit 1
+	#	exit 1
     fi
 
+    ./bin/checkAndResetInitLattice.exe $i input/inited.dat 
+
+    val=$?
+    if [[ $val -eq 1 ]]
+    then
+	exit 1
+    fi
+    
     #copy over the initial conditions for later comparison
     cp input/inited.dat output/inited--0.100_$logName.dat
     #Process & background

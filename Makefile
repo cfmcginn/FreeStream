@@ -26,7 +26,7 @@ MKDIR_OUTPUT=mkdir -p $(PWD)/output
 MKDIR_PDF=mkdir -p $(PWD)/pdfDir
 MKDIR_LOG=mkdir -p $(PWD)/logdir
 
-all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe bin/compRootToDat.exe bin/compareIPFS.exe bin/compDat.exe bin/checkInitFiles.exe bin/rescaleInitED.exe bin/checkED.exe
+all: mkdirBin mkdirLib mkdirPdf mkdirlogdir mkdirOutput lib/paramreader.o lib/linear_int.o bin/initE.exe bin/FS.exe bin/InitED.exe bin/initPointSource.exe bin/processED.exe bin/freestream.exe bin/initIPGlasma.exe bin/compRootToDat.exe bin/compareIPFS.exe bin/compDat.exe bin/checkInitFiles.exe bin/rescaleInitED.exe bin/checkED.exe bin/checkAndResetInitLattice.exe
 
 mkdirBin:
 	$(MKDIR_BIN)
@@ -87,6 +87,9 @@ bin/rescaleInitED.exe: src/rescaleInitED.C
 
 bin/checkED.exe: src/checkED.C
 	$(CXX) $(CXXFLAGS) src/checkED.C $(INCLUDE) -o bin/checkED.exe
+
+bin/checkAndResetInitLattice.exe: src/checkAndResetInitLattice.C
+	$(CXX) $(CXXFLAGS) src/checkAndResetInitLattice.C $(INCLUDE) -o bin/checkAndResetInitLattice.exe
 
 clean:
 	rm -f ./*~

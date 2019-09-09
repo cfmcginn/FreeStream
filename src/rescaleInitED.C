@@ -1,3 +1,5 @@
+//Author: Chris McGinn
+
 //cpp
 #include <algorithm>
 #include <fstream>
@@ -13,15 +15,6 @@
 //ROOT
 #include "TDatime.h"
 #include "TMath.h"
-
-bool fileCheckWithMsg(std::string inFileName, std::string appStr, std::string retStr)
-{
-  if(!checkFile(inFileName) || inFileName.find(appStr) == std::string::npos){
-    std::cout << "Given inFileName \'" << inFileName << "\' is invalid. return " << retStr << std::endl;
-    return false;
-  }
-  return true;
-}
 
 int rescaleInitED(std::string inParams, std::string inInitED, std::string inLUT)
 {
