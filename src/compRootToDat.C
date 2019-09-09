@@ -53,7 +53,7 @@ int compRootToDat(std::string inRootFile, std::string inDatFile, bool doPrint = 
   inFile.close();
 
   const Int_t nBinsDat = TMath::Sqrt(datVect.size());
-  if(nBinsDat*nBinsDat != datVect.size()){
+  if(nBinsDat*nBinsDat != (int)datVect.size()){
     std::cout << "datVect " << datVect.size() << " not sqrt. return 1" << std::endl;
     return 1;
   }

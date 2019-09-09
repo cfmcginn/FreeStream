@@ -159,7 +159,6 @@ int initIPGlasma(const int timeInit = 0, const double xLow = 5, const double xHi
 
   Double_t aveED = totalED/totalN;
   std::cout << "AVERAGE ED: " << aveED << std::endl;
-  const Double_t targetAveED = 0.013;
   const Double_t factorToED = 1;//targetAveED/aveED;
 
   for(Int_t bIX = 0; bIX < initHist_p->GetXaxis()->GetNbins(); ++bIX){

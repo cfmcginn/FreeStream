@@ -39,7 +39,7 @@ int checkAndResetInitLattice(const int nLat, const std::string inInitEDName)
   std::vector<std::string> mainFullVect = vectFromInFile(inInitEDName);
   
   int fileNLat = std::sqrt(mainFullVect.size());
-  if(fileNLat*fileNLat != mainFullVect.size()){
+  if(fileNLat*fileNLat != (int)mainFullVect.size()){
     std::cout << "Given file has size " << mainFullVect.size() << " with no integer square!!!! return 1" << std::endl;
     std::cout << " (int)sqrt(" << mainFullVect.size() << ")=" << fileNLat << "; " << fileNLat << "*" << fileNLat << "=" << fileNLat*fileNLat << "!=" << mainFullVect.size() << std::endl;
     return 1;

@@ -127,7 +127,7 @@ int rescaleInitED(std::string inParams, std::string inInitED, std::string inLUT)
 
   //Lets just check that the lattice is square
   int size = TMath::Sqrt(initEDLatticeFlat.size());
-  if(size*size != initEDLatticeFlat.size()){
+  if(size*size != (int)initEDLatticeFlat.size()){
     std::cout << "Lattice size is not a square. return 1." << std::endl;
     return 1;
   }
