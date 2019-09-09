@@ -1,3 +1,5 @@
+//Author: Chris McGinn
+
 //cpp
 #include <cmath>
 #include <fstream>
@@ -8,8 +10,6 @@
 //Local
 #include "include/checkMakeDir.h"
 #include "include/stringUtil.h"
-
-
 
 int checkED(const std::string inFileName)
 {
