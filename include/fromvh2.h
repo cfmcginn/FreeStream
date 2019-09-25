@@ -755,7 +755,7 @@ void outputMeasurements(double t, int outStep = 0)
   cout.precision(5);
   int dwidth = 13;
 
-  std::string outStr = "Step" + std::to_string(outStep);
+  std::string outStr = "Step" + std::to_string(outStep) + " ";
   std::string outStr2 = std::to_string(t/fmtoGeV*AT);
   if(outStr2.find(".") != std::string::npos){
     while(outStr2.substr(outStr2.size()-1, 1).find("0") != std::string::npos){

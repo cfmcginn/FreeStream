@@ -87,13 +87,17 @@ double f(double px, double py, double pz, double tn, double t0, int sx, int sy, 
   int y1 = PBC(int(ceil(yy)), NUMT);
   
   double Lambda = bilinear_int(x0,x1, y0, y1, Tref[x0][y0], Tref[x1][y0], Tref[x1][y1], Tref[x0][y1], xx, yy);
-  double ff = exp(-pt0/Lambda);
-  if(fabs(Lambda)<1.e-16) ff=0;
-
-  if(!isfinite(ff)) printf("problem here %i %i %f\n",sx,sy,ff);
+  double ff = 0;
+  if(Lambda > 1.e-16) ff = exp(-pt0/Lambda);
+  //  if(fabs(Lambda)<1.e-16) ff=0; //CFM EDIT: changing this to handle negative temperatures (hopefully)
+  
+  if(!isfinite(ff)){
+    printf("problem here, LINE %i, %i %i %f\n", __LINE__,sx,sy,ff);
+    std::cout << " Lamda, pt0, ff: " << Lambda << ", " << pt0 << ", " << ff << std::endl;
+  }
 
   double res= ff*pvec[mu]*pvec[nu]/pvec[0];
-  if(!isfinite(res)) printf("problem here %i %i %f %g\n", sx, sy, res, Lambda);
+  if(!isfinite(res)) printf("problem here, LINE %i, %i %i %f %g\n", __LINE__, sx, sy, res, Lambda);
   if(sx == 4 && sy == 5 && mu == 0 && nu == 0 && false){std::cout << " ANSWER: " << res << std::endl;}
   
   return res;

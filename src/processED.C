@@ -185,8 +185,8 @@ int processED(std::string inDir, double latticeSpacing=0.1/*in fm*/, double xOff
     hist_p->SetMinimum(minVal);
     hist_p->SetMaximum(maxVal2);
     hist_p->SetMinimum(minVal2);
-    //    hist_p->SetMaximum(0.08);
-    //    hist_p->SetMinimum(0.0);
+    hist_p->SetMaximum(0.0003);
+    hist_p->SetMinimum(0.0);
 
     //IF DOING SURF DO ADDITIONAL OFFSETS
     std::string drawOpt = "COLZ";
